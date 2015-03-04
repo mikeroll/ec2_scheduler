@@ -53,7 +53,7 @@ if __name__ == '__main__':
     
     if not targets:
         print('Nothing to do here.')
-        return
+        exit
 
     for t in targets:
         manage_state(t)
