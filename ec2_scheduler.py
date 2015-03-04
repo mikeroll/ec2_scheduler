@@ -50,6 +50,10 @@ if __name__ == '__main__':
         } 
         for i in instances if get_wanted_state(i) != i.state 
     ]
+    
+    if not targets:
+        print('Nothing to do here.')
+        return
 
     for t in targets:
         manage_state(t)
