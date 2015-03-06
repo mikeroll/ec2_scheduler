@@ -40,6 +40,7 @@ if __name__ == '__main__':
     r53_conn = route53.connect_to_region('eu-west-1')
     instances = ec2_conn.get_only_instances(filters={ 
         "instance-state-name": ['running', 'stopped'],
+        "tag:automated": ['yes', 'true']
         "tag:start_time":"*", 
         "tag:stop_time":"*" 
     })
