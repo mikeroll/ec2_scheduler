@@ -63,6 +63,7 @@ if __name__ == '__main__':
         sleep(5)
     
     for t in targets:
-        zone = t['instance'].tags['uri'].split('_')[1]
-        z = r53_conn.get_zone(zone)
-        manage_uri(t, z)
+        if t['instance'].tags.has_key['uri']:
+            zone = t['instance'].tags['uri'].split('_')[1]
+            z = r53_conn.get_zone(zone)
+            manage_uri(t, r53_conn)
