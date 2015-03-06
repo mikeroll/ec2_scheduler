@@ -67,4 +67,4 @@ if __name__ == '__main__':
         if t['instance'].tags.has_key('uri'):
             zone = t['instance'].tags['uri'].split('_')[1]
             z = r53_conn.get_zone(zone)
-            manage_uri(t, r53_conn)
+            manage_uri(t, z)
