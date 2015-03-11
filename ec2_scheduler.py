@@ -6,6 +6,7 @@ from boto import ec2,route53
 from croniter import croniter
 from datetime import datetime
 from time import sleep
+import sys
 
 def get_wanted_state(instance):
     start = croniter(instance.tags['start_time'], datetime.utcnow())
@@ -59,9 +60,14 @@ if __name__ == '__main__':
     for t in targets:
         manage_state(t)
 
+    transition_timeout = 900
     if targets: print("Waiting for state transitions to complete...")
     while any(True for t in targets if t['instance'].update() != t['wanted_state']):
         sleep(5)
+        transition_timeout -= 5
+        if transition_timeout <= 0:
+            print("Timeout waiting for state transitions. Please check the instances manually.")
+            sys.exit(1)
     
     for t in targets:
         if t['instance'].tags.has_key('uri'):
