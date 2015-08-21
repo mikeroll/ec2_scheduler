@@ -9,8 +9,9 @@ from time import sleep
 import sys
 
 def get_wanted_state(instance):
-    start = croniter(instance.tags['start_time'], datetime.utcnow())
-    stop = croniter(instance.tags['stop_time'], datetime.utcnow())
+    automated, start_cron, stop_cron = instance.tags['autostate'].split(':')
+    start = croniter(start_cron, datetime.utcnow())
+    stop = croniter(stop_cron, datetime.utcnow())
     return "running" if start.get_prev() > stop.get_prev() else "stopped"
 
 def manage_state(target):
@@ -41,9 +42,15 @@ if __name__ == '__main__':
     r53_conn = route53.connect_to_region('eu-west-1')
     instances = ec2_conn.get_only_instances(filters={ 
         "instance-state-name": ['running', 'stopped'],
-        "tag:automated": ['yes', 'Yes', 'true', 'True'],
-        "tag:start_time":"*", 
-        "tag:stop_time":"*" 
+        "tag:autostate": [
+            "y:*:*",
+            "Y:*:*",
+            "T:*:*",
+            "yes:*:*",
+            "Yes:*:*",
+            "true:*:*", 
+            "True:*:*", 
+        ]
     })
     targets = [ 
         { 
@@ -60,7 +67,7 @@ if __name__ == '__main__':
     for t in targets:
         manage_state(t)
 
-    transition_timeout = 900
+    transition_timeout = 900    
     if targets: print("Waiting for state transitions to complete...")
     while any(True for t in targets if t['instance'].update() != t['wanted_state']):
         sleep(5)
