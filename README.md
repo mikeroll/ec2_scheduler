@@ -18,6 +18,7 @@ Attach `uri` tag with the value in format `subdomain_zone`, to have the instance
 Example:
 ```
 uri = "service_mycopr.example.com"
+```
 
 ### Usage
 Run the `ec2_scheduler.py` periodically wherever you like.
